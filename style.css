@@ -202,7 +202,7 @@ body {
 
 /* ==================== GALLERY SECTION ==================== */
 .gallery-section {
-    background: var(--dark-1);
+    background: var(--cream);
     max-width: 100%;
     padding: 100px 40px 100px;
 }
@@ -220,25 +220,25 @@ body {
     display: block;
     width: 1px;
     height: 40px;
-    background: linear-gradient(to bottom, transparent, var(--gold-dim));
+    background: linear-gradient(to bottom, transparent, var(--gold));
     margin: 0 auto 28px;
-    opacity: 0.5;
+    opacity: 0.4;
 }
 
 .section-header h2 {
     font-family: 'Noto Serif KR', serif;
-    font-size: clamp(1.4rem, 3vw, 1.9rem);
-    font-weight: 300;
-    color: var(--white);
-    letter-spacing: 0.08em;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 400;
+    color: var(--text);
+    letter-spacing: 0.06em;
     margin-bottom: 0.8rem;
 }
 
 .section-header p {
-    color: var(--white-faint);
-    font-size: 0.83rem;
+    color: var(--text-faint);
+    font-size: 0.9rem;
     font-weight: 300;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     line-height: 1.8;
 }
 
@@ -251,27 +251,28 @@ body {
 
 .search-input {
     width: 100%;
-    background: var(--dark-3);
-    border: 1px solid rgba(255,255,255,0.07);
+    background: var(--card-bg);
+    border: 1px solid rgba(100, 80, 40, 0.18);
     border-radius: 2px;
-    padding: 13px 48px 13px 18px;
-    color: var(--white);
+    padding: 14px 48px 14px 18px;
+    color: var(--text);
     font-family: 'Noto Sans KR', sans-serif;
-    font-size: 0.88rem;
+    font-size: 0.95rem;
     font-weight: 300;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
     outline: none;
-    transition: border-color 0.25s, background 0.25s;
+    transition: border-color 0.25s, box-shadow 0.25s;
     -webkit-appearance: none;
+    box-shadow: var(--shadow-sm);
 }
 
 .search-input::placeholder {
-    color: rgba(255,255,255,0.2);
+    color: var(--text-faint);
 }
 
 .search-input:focus {
-    border-color: rgba(200,169,110,0.35);
-    background: rgba(37,32,25,0.9);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(184,146,74,0.1);
 }
 
 /* 브라우저 기본 X 버튼 제거 */
@@ -282,7 +283,7 @@ body {
     right: 16px;
     top: 50%;
     transform: translateY(-50%);
-    color: rgba(255,255,255,0.2);
+    color: var(--text-faint);
     font-size: 1.1rem;
     pointer-events: none;
 }
@@ -291,7 +292,7 @@ body {
     position: absolute;
     right: 16px;
     top: calc(100% + 8px);
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     color: var(--gold-dim);
     letter-spacing: 0.06em;
     opacity: 0;
@@ -305,18 +306,18 @@ body {
 .search-no-result {
     text-align: center;
     padding: 60px 0;
-    color: var(--white-faint);
-    font-size: 0.88rem;
+    color: var(--text-faint);
+    font-size: 0.9rem;
     font-weight: 300;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
 }
 
 /* ==================== STATUS ==================== */
 .status-box {
     text-align: center;
     padding: 80px 0;
-    color: var(--white-faint);
-    font-size: 0.88rem;
+    color: var(--text-faint);
+    font-size: 0.9rem;
     font-weight: 300;
     letter-spacing: 0.04em;
 }
@@ -324,8 +325,8 @@ body {
 .spinner {
     width: 28px;
     height: 28px;
-    border: 1px solid rgba(200, 169, 110, 0.2);
-    border-top-color: var(--gold-dim);
+    border: 1px solid rgba(184, 146, 74, 0.25);
+    border-top-color: var(--gold);
     border-radius: 50%;
     animation: spin 0.9s linear infinite;
     margin: 0 auto 1.2rem;
@@ -336,7 +337,7 @@ body {
 }
 
 #error-msg {
-    color: rgba(220, 100, 100, 0.7);
+    color: #A63E3E;
 }
 
 /* ==================== GALLERY GRID ==================== */
@@ -349,40 +350,39 @@ body {
 
 .card {
     break-inside: avoid;
-    margin-bottom: 16px;
-    background: var(--dark-2);
+    margin-bottom: 20px;
+    background: var(--card-bg);
     border-radius: var(--radius);
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
     outline: none;
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    box-shadow: var(--shadow-sm);
 }
 
 .card:hover,
 .card:focus-visible {
-    transform: translateY(-4px);
-    border-color: rgba(200, 169, 110, 0.18);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
 }
 
 .card-img-wrap {
     overflow: hidden;
-    background: var(--dark-3);
+    background: var(--cream-2);
     position: relative;
-    /* 액자 효과: 안쪽 여백 + 이중 테두리 */
+    /* 액자 효과: 안쪽 여백 + 골드 테두리 */
     padding: 10px;
-    border: 1px solid rgba(200,169,110,0.25);
+    border-bottom: 1px solid rgba(184,146,74,0.15);
     box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.04),
-        inset 4px 4px 12px rgba(0,0,0,0.35),
-        0 2px 16px rgba(0,0,0,0.4);
+        inset 0 0 0 1px rgba(184,146,74,0.1),
+        inset 3px 3px 10px rgba(100,80,30,0.08);
 }
 
 .card-img-wrap::before {
     content: '';
     position: absolute;
     inset: 4px;
-    border: 1px solid rgba(200,169,110,0.12);
+    border: 1px solid rgba(184,146,74,0.18);
     z-index: 1;
     pointer-events: none;
 }
@@ -391,7 +391,7 @@ body {
     content: '';
     position: absolute;
     inset: 10px;
-    background: linear-gradient(to bottom, transparent 55%, rgba(0,0,0,0.28) 100%);
+    background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.12) 100%);
     pointer-events: none;
     z-index: 1;
 }
@@ -399,40 +399,39 @@ body {
 .card-img-wrap img {
     width: 100%;
     display: block;
-    transition: transform 0.4s var(--ease), filter 0.3s var(--ease);
-    filter: brightness(0.88) sepia(0.06);
+    transition: transform 0.4s var(--ease);
+    filter: sepia(0.04);
 }
 
 .card:hover .card-img-wrap img {
-    transform: scale(1.04);
-    filter: brightness(0.98) sepia(0);
+    transform: scale(1.03);
+    filter: sepia(0);
 }
 
 .card-body {
-    padding: 14px 16px 18px;
+    padding: 14px 18px 20px;
 }
 
 .card-date {
-    font-size: 0.68rem;
-    color: rgba(255,255,255,0.2);
+    font-size: 0.72rem;
+    color: var(--text-faint);
     font-weight: 300;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     margin-bottom: 0.3rem;
 }
 
 .card-name {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     color: var(--gold-dim);
     font-weight: 500;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     margin-bottom: 0.5rem;
-    text-transform: uppercase;
 }
 
 .card-story {
-    font-size: 0.85rem;
-    color: var(--white-dim);
-    line-height: 1.75;
+    font-size: 0.9rem;
+    color: var(--text-sub);
+    line-height: 1.8;
     font-weight: 300;
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -587,34 +586,46 @@ body {
 .footer {
     text-align: center;
     padding: 52px 24px;
-    background: var(--black);
-    border-top: 1px solid rgba(255,255,255,0.04);
+    background: var(--cream-2);
+    border-top: 1px solid rgba(184,146,74,0.15);
     line-height: 2.2;
 }
 
 .footer-title {
-    font-size: 0.82rem;
-    color: var(--white-faint);
-    letter-spacing: 0.08em;
+    font-size: 0.85rem;
+    color: var(--text-sub);
+    letter-spacing: 0.06em;
     font-weight: 300;
 }
 
 .footer-copy {
-    font-size: 0.72rem;
-    color: rgba(255,255,255,0.15);
-    letter-spacing: 0.06em;
+    font-size: 0.75rem;
+    color: var(--text-faint);
+    letter-spacing: 0.04em;
 }
 
 /* ==================== RESPONSIVE ==================== */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
     .gallery-section {
-        padding: 72px 16px 72px;
+        padding: 60px 12px 60px;
     }
 
+    /* 모바일: 2열 */
     .gallery-grid {
-        columns: 1;
-        column-gap: 0;
+        columns: 2;
+        column-gap: 10px;
     }
+
+    .card-body {
+        padding: 10px 12px 14px;
+    }
+
+    .card-name  { font-size: 0.72rem; }
+    .card-story { font-size: 0.8rem; -webkit-line-clamp: 2; }
+    .card-date  { font-size: 0.66rem; }
+
+    .section-header { margin-bottom: 40px; }
+    .search-wrap    { margin-bottom: 32px; }
 
     .lightbox {
         padding: 60px 12px 48px;
@@ -624,7 +635,7 @@ body {
     .lb-next { right: 4px; padding: 16px 10px; }
 }
 
-@media (min-width: 769px) and (max-width: 1100px) {
+@media (min-width: 601px) and (max-width: 1100px) {
     .gallery-grid {
         columns: 2 240px;
     }
