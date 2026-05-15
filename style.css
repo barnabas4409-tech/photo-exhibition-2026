@@ -552,6 +552,12 @@ body {
     font-size: 0.75rem;
     color: var(--text-faint);
 }
+.footer-music {
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    margin-top: 0.6rem;
+    opacity: 0.7;
+}
 
 /* ==================== 떠있는 음악 버튼 ==================== */
 .fab {
