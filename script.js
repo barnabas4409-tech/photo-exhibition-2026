@@ -12,6 +12,7 @@ const CONFIG = {
     COL_PLACE:     5,   // F열: 장소
     COL_IMAGE_URL: 7,   // H열: 구글 드라이브 링크
     COL_STORY:     3,   // D열: 사연설명
+    COL_BLOCK:     9,   // J열: 차단 여부 (X 입력 시 웹에서 숨김)
 
     HEADER_ROWS: 1,
 };
@@ -48,9 +49,13 @@ function parseCSV(csv) {
         const rawUrl   = stripQuotes(cols[CONFIG.COL_IMAGE_URL]  || '');
         const story    = stripQuotes(cols[CONFIG.COL_STORY]      || '');
         const imageUrl = normalizeDriveUrl(rawUrl);
+        const block    = stripQuotes(cols[CONFIG.COL_BLOCK] || '');
 
         // 이름도 사진도 없으면 빈 행으로 간주하고 건너뜀
         if (!imageUrl && !name) continue;
+
+        // J열에 X 입력 시 차단
+        if (block.trim().toUpperCase() === 'X') continue;
 
         result.push({ name, date, place, imageUrl, story });
     }
