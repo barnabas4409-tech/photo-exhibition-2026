@@ -395,6 +395,8 @@ body {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    word-break: keep-all;
+    overflow-wrap: break-word;
 }
 
 /* ==================== LIGHTBOX ==================== */
@@ -472,6 +474,8 @@ body {
     font-weight: 300;
     max-width: 560px;
     white-space: pre-wrap;
+    word-break: keep-all;
+    overflow-wrap: break-word;
 }
 
 .lb-close, .lb-prev, .lb-next {
