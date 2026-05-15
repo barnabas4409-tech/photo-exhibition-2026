@@ -52,7 +52,8 @@ function parseCSV(csv) {
         const story    = stripQuotes(cols[CONFIG.COL_STORY]      || '');
         const imageUrl = normalizeDriveUrl(rawUrl);
 
-        if (!imageUrl) continue;
+        // 이름도 사진도 없으면 빈 행으로 간주하고 건너뜀
+        if (!imageUrl && !name) continue;
 
         result.push({ name, date, place, imageUrl, story });
     }
@@ -135,13 +136,14 @@ function renderGallery(data) {
         const hasBody = item.name || item.date || item.story || item.place;
 
         card.innerHTML = `
+            ${item.imageUrl ? `
             <div class="card-img-wrap">
                 <img
                     src="${escapeHtml(item.imageUrl)}"
                     alt="${escapeHtml(item.name || '')}의 사진"
                     loading="lazy"
                 >
-            </div>
+            </div>` : `<div class="card-no-img">사진 준비 중</div>`}
             ${hasBody ? `
             <div class="card-body">
                 <p class="card-meta">${[item.date, item.place].filter(Boolean).map(escapeHtml).join(' · ')}</p>
@@ -150,10 +152,14 @@ function renderGallery(data) {
             </div>` : ''}
         `;
 
-        // 이미지 로드 실패 시 카드 숨기기
-        card.querySelector('img').addEventListener('error', () => {
-            card.style.display = 'none';
-        });
+        // 이미지 로드 실패 시 이미지 영역만 교체 (카드는 유지)
+        const img = card.querySelector('img');
+        if (img) {
+            img.addEventListener('error', () => {
+                img.closest('.card-img-wrap').outerHTML =
+                    '<div class="card-no-img">사진을 불러올 수 없습니다</div>';
+            });
+        }
 
         card.addEventListener('click', () => openLightbox(index));
         card.addEventListener('keydown', (e) => {
