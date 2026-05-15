@@ -225,6 +225,115 @@ function updateLightbox() {
 }
 
 // ============================================================
+//  유튜브 음악
+// ============================================================
+const YOUTUBE_VIDEO_ID = 'MiRtmNi5y8Y';
+let ytPlayer = null;
+let musicPlaying = false;
+
+// YouTube IFrame API가 준비되면 자동 호출됨
+function onYouTubeIframeAPIReady() {
+    ytPlayer = new YT.Player('yt-player', {
+        videoId: YOUTUBE_VIDEO_ID,
+        playerVars: {
+            autoplay: 0,
+            loop: 1,
+            playlist: YOUTUBE_VIDEO_ID,
+            controls: 0,
+            rel: 0,
+            fs: 0,
+        },
+        events: {
+            onStateChange: (e) => {
+                const btnMusic = document.getElementById('btn-music');
+                musicPlaying = e.data === YT.PlayerState.PLAYING;
+                btnMusic.textContent = musicPlaying ? '♫' : '♪';
+                btnMusic.classList.toggle('active', musicPlaying);
+            }
+        }
+    });
+}
+
+function toggleMusic() {
+    if (!ytPlayer) return;
+    if (musicPlaying) {
+        ytPlayer.pauseVideo();
+    } else {
+        ytPlayer.playVideo();
+    }
+}
+
+// ============================================================
+//  슬라이드쇼
+// ============================================================
+const SLIDE_DURATION = 5000; // 5초
+let slideshowTimer   = null;
+let slideshowActive  = false;
+
+function startSlideshow() {
+    if (items.length === 0) return;
+    slideshowActive = true;
+
+    const btn = document.getElementById('btn-slideshow');
+    btn.textContent = '⏸';
+    btn.classList.add('active');
+
+    // 라이트박스가 닫혀있으면 첫 사진부터
+    if (document.getElementById('lightbox').classList.contains('hidden')) {
+        openLightbox(0);
+    }
+
+    document.getElementById('lb-progress-wrap').classList.add('visible');
+    scheduleNext();
+}
+
+function stopSlideshow() {
+    slideshowActive = false;
+    clearTimeout(slideshowTimer);
+
+    const btn = document.getElementById('btn-slideshow');
+    btn.textContent = '▶';
+    btn.classList.remove('active');
+
+    document.getElementById('lb-progress-wrap').classList.remove('visible');
+    resetProgress();
+}
+
+function scheduleNext() {
+    resetProgress();
+    // 다음 프레임에 애니메이션 시작 (리플로우 트리거)
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            const bar = document.getElementById('lb-progress-bar');
+            bar.classList.add('animate');
+            bar.style.transitionDuration = SLIDE_DURATION + 'ms';
+            bar.style.width = '100%';
+        });
+    });
+
+    slideshowTimer = setTimeout(() => {
+        if (!slideshowActive) return;
+        showNext();
+        scheduleNext();
+    }, SLIDE_DURATION);
+}
+
+function resetProgress() {
+    const bar = document.getElementById('lb-progress-bar');
+    bar.classList.remove('animate');
+    bar.style.transitionDuration = '';
+    bar.style.width = '0%';
+}
+
+function toggleSlideshow() {
+    if (slideshowActive) {
+        stopSlideshow();
+    } else {
+        startSlideshow();
+    }
+}
+
+// ============================================================
 //  검색
 // ============================================================
 function initSearch() {
@@ -275,20 +384,32 @@ function initSearch() {
 // ============================================================
 //  이벤트
 // ============================================================
-document.getElementById('lb-close').addEventListener('click', closeLightbox);
-document.getElementById('lb-prev').addEventListener('click', showPrev);
-document.getElementById('lb-next').addEventListener('click', showNext);
+document.getElementById('lb-close').addEventListener('click', () => {
+    stopSlideshow();
+    closeLightbox();
+});
+document.getElementById('lb-prev').addEventListener('click', () => {
+    if (slideshowActive) { clearTimeout(slideshowTimer); scheduleNext(); }
+    showPrev();
+});
+document.getElementById('lb-next').addEventListener('click', () => {
+    if (slideshowActive) { clearTimeout(slideshowTimer); scheduleNext(); }
+    showNext();
+});
 
 document.getElementById('lightbox').addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) closeLightbox();
+    if (e.target === e.currentTarget) { stopSlideshow(); closeLightbox(); }
 });
 
 document.addEventListener('keydown', (e) => {
     if (document.getElementById('lightbox').classList.contains('hidden')) return;
-    if (e.key === 'Escape')     closeLightbox();
-    if (e.key === 'ArrowLeft')  showPrev();
-    if (e.key === 'ArrowRight') showNext();
+    if (e.key === 'Escape')     { stopSlideshow(); closeLightbox(); }
+    if (e.key === 'ArrowLeft')  { if (slideshowActive) { clearTimeout(slideshowTimer); scheduleNext(); } showPrev(); }
+    if (e.key === 'ArrowRight') { if (slideshowActive) { clearTimeout(slideshowTimer); scheduleNext(); } showNext(); }
 });
+
+document.getElementById('btn-music').addEventListener('click', toggleMusic);
+document.getElementById('btn-slideshow').addEventListener('click', toggleSlideshow);
 
 // 모바일 스와이프
 let touchStartX = 0;

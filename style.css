@@ -528,6 +528,69 @@ body {
     color: var(--text-faint);
 }
 
+/* ==================== 떠있는 버튼 (음악 / 슬라이드쇼) ==================== */
+.fab-wrap {
+    position: fixed;
+    bottom: 28px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 8000;
+}
+
+.fab {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(184,146,74,0.35);
+    background: rgba(250,248,244,0.92);
+    color: var(--gold-dim);
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(80,60,30,0.15);
+    transition: all 0.25s var(--ease);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fab:hover {
+    background: #fff;
+    border-color: var(--gold);
+    box-shadow: 0 6px 24px rgba(80,60,30,0.2);
+    transform: scale(1.08);
+}
+
+.fab.active {
+    background: var(--gold);
+    color: #fff;
+    border-color: var(--gold);
+}
+
+/* 슬라이드쇼 진행바 */
+.lb-progress-wrap {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    display: none;
+}
+
+.lb-progress-wrap.visible { display: block; }
+
+.lb-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: var(--gold);
+    transition: none;
+}
+
+.lb-progress-bar.animate {
+    transition: width linear;
+}
+
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 600px) {
     .gallery-section { padding: 60px 12px; }

@@ -78,6 +78,9 @@
         </div>
 
         <p class="lb-counter" id="lb-counter"></p>
+        <div class="lb-progress-wrap" id="lb-progress-wrap">
+            <div class="lb-progress-bar" id="lb-progress-bar"></div>
+        </div>
     </div>
 
     <!-- Footer -->
@@ -86,6 +89,16 @@
         <p class="footer-copy">© 2026 분당우리교회</p>
     </footer>
 
+    <!-- 유튜브 숨김 플레이어 -->
+    <div id="yt-player" style="position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;top:-9999px;"></div>
+
+    <!-- 떠있는 버튼들 -->
+    <div class="fab-wrap">
+        <button id="btn-music" class="fab fab-music" aria-label="음악 재생/정지" title="음악">♪</button>
+        <button id="btn-slideshow" class="fab fab-slideshow" aria-label="슬라이드쇼" title="슬라이드쇼">▶</button>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script src="script.js"></script>
 </body>
 </html>
