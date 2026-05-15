@@ -450,24 +450,24 @@ body {
 .lb-info { text-align: center; padding: 0 20px; }
 
 .lb-date {
-    color: rgba(255,255,255,0.3);
-    font-size: 0.78rem;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.82rem;
     letter-spacing: 0.1em;
     margin-bottom: 0.6rem;
     font-weight: 300;
 }
 
 .lb-name {
-    color: var(--gold-dim);
-    font-size: 0.82rem;
+    color: #D4A85A;
+    font-size: 0.9rem;
     letter-spacing: 0.15em;
     margin-bottom: 1rem;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .lb-story {
-    color: var(--white-dim);
-    font-size: 0.97rem;
+    color: rgba(245,242,238,0.88);
+    font-size: 1rem;
     line-height: 1.9;
     font-weight: 300;
     max-width: 560px;

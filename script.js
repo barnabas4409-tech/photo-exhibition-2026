@@ -275,7 +275,8 @@ function startSlideshow() {
     slideshowActive = true;
 
     if (document.getElementById('lightbox').classList.contains('hidden')) {
-        openLightbox(0);
+        const randomIndex = Math.floor(Math.random() * items.length);
+        openLightbox(randomIndex);
     }
 
     document.getElementById('lb-progress-wrap').classList.add('visible');
