@@ -3,22 +3,16 @@
 // ============================================================
 
 const CONFIG = {
-    // 1. 구글 시트 ID (URL에서 /d/ 뒤 ~ /edit 앞 부분)
-    //    예) https://docs.google.com/spreadsheets/d/1aBcD.../edit
-    //                                              ↑ 여기
-    SHEET_ID: 'YOUR_GOOGLE_SHEET_ID',
+    // 구글 시트 웹 게시 CSV URL (파일 → 공유 → 웹에 게시 → CSV)
+    CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTB1FtRSqIlxFCrLI5wwTXxIz7HuyAYTFAz4PLwSRA-84W0gYYMy_z2XKhCsQB5I1vZxd5DC5bxoWRW/pub?output=csv',
 
-    // 2. 시트 탭 이름 (하단 탭 이름과 정확히 일치해야 합니다)
-    SHEET_NAME: '시트1',
-
-    // 3. 각 열 번호 (A=0, B=1, C=2, D=3, E=4 ...)
-    //    구글 시트의 실제 열 순서에 맞게 수정하세요
+    // 각 열 번호 (A=0, B=1, C=2, D=3 ...)
     COL_NAME:      0,   // A열: 이름
     COL_DATE:      1,   // B열: 날짜
     COL_IMAGE_URL: 2,   // C열: 사진 URL (구글 드라이브 공유 링크)
     COL_STORY:     3,   // D열: 소개/사연
 
-    // 4. 헤더 행 수 (건너뛸 맨 위 행 수, 보통 1)
+    // 헤더 행 수 (맨 위 제목 행, 보통 1)
     HEADER_ROWS: 1,
 };
 
@@ -32,11 +26,7 @@ let currentIndex = 0;
 //  구글 시트 데이터 가져오기
 // ============================================================
 async function fetchData() {
-    const url =
-        `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}` +
-        `/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(CONFIG.SHEET_NAME)}`;
-
-    const res = await fetch(url);
+    const res = await fetch(CONFIG.CSV_URL);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const csv = await res.text();
@@ -338,7 +328,7 @@ async function init() {
     const errorText = document.getElementById('error-text');
 
     // SHEET_ID가 설정되지 않았으면 데모 모드
-    if (CONFIG.SHEET_ID === 'YOUR_GOOGLE_SHEET_ID') {
+    if (!CONFIG.CSV_URL || CONFIG.CSV_URL.includes('YOUR_')) {
         items = DEMO_ITEMS;
         loadingEl.classList.add('hidden');
         renderGallery(items);
