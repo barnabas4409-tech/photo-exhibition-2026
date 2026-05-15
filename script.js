@@ -511,6 +511,10 @@ async function init() {
     }
 }
 
+// 페이지 열릴 때 항상 메인화면(맨 위)에서 시작
+history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+
 // 이미지 우클릭 · 드래그 저장 차단
 document.addEventListener('contextmenu', (e) => {
     if (e.target.tagName === 'IMG') e.preventDefault();
