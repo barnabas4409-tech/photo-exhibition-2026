@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>창립기념주일 사진전 — 분당우리교회</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Hero -->
+    <header class="hero">
+        <div class="hero-content">
+            <p class="hero-church">분당우리교회</p>
+            <h1 class="hero-title">창립기념주일<br>사진전</h1>
+            <div class="hero-divider"></div>
+            <p class="hero-desc">함께 울고 함께 웃는, 우리의 행복한 이야기들</p>
+            <p class="hero-verse">"즐거워하는 자들과 함께 즐거워하고<br>우는 자들과 함께 울라"<br><span class="hero-verse-ref">로마서 12:15</span></p>
+        </div>
+        <div class="hero-actions">
+            <a href="#gallery-section" class="btn-enter">
+                <span class="btn-enter-text">사진전 입장하기</span>
+                <span class="btn-enter-arrow">↓</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Gallery Section -->
+    <main>
+        <section class="gallery-section" id="gallery-section">
+            <div class="section-header">
+                <h2>함께한 순간들</h2>
+                <p>교우들이 나눠주신 소중한 사진과 사연입니다</p>
+            </div>
+
+            <!-- 검색창 -->
+            <div class="search-wrap">
+                <input
+                    type="search"
+                    id="search-input"
+                    class="search-input"
+                    placeholder="이름, 날짜, 사연으로 검색..."
+                    aria-label="사진 검색"
+                >
+                <span class="search-icon" aria-hidden="true">&#x2315;</span>
+                <span id="search-count" class="search-count"></span>
+            </div>
+
+            <div id="loading" class="status-box">
+                <div class="spinner"></div>
+                <p>사진을 불러오는 중입니다...</p>
+            </div>
+
+            <div id="error-msg" class="status-box hidden">
+                <p id="error-text">사진을 불러오는 데 문제가 발생했습니다.</p>
+            </div>
+
+            <div id="gallery" class="gallery-grid" role="list"></div>
+        </section>
+    </main>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="사진 크게 보기">
+        <button class="lb-close" id="lb-close" aria-label="닫기">✕</button>
+        <button class="lb-prev" id="lb-prev" aria-label="이전 사진">‹</button>
+        <button class="lb-next" id="lb-next" aria-label="다음 사진">›</button>
+
+        <div class="lb-content">
+            <div class="lb-img-wrap">
+                <img id="lb-img" src="" alt="">
+            </div>
+            <div class="lb-info">
+                <p id="lb-date" class="lb-date"></p>
+                <p id="lb-name" class="lb-name"></p>
+                <p id="lb-story" class="lb-story"></p>
+            </div>
+        </div>
+
+        <p class="lb-counter" id="lb-counter"></p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-title">분당우리교회 창립기념주일 사진전</p>
+        <p class="footer-copy">© 2026 분당우리교회</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
