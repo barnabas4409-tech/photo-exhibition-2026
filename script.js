@@ -263,7 +263,7 @@ function updateLightbox() {
 // ============================================================
 //  유튜브 음악
 // ============================================================
-const YOUTUBE_VIDEO_ID = 'MiRtmNi5y8Y';
+const YOUTUBE_VIDEO_ID = 'zMYaL-dosGo';
 let ytPlayer = null;
 let musicPlaying = false;
 
@@ -273,14 +273,17 @@ function onYouTubeIframeAPIReady() {
         videoId: YOUTUBE_VIDEO_ID,
         playerVars: {
             autoplay: 0,
-            loop: 1,
-            playlist: YOUTUBE_VIDEO_ID,
             controls: 0,
             rel: 0,
             fs: 0,
         },
         events: {
             onStateChange: (e) => {
+                // 영상 끝나면 처음부터 다시 재생 (loop 파라미터보다 끊김 없음)
+                if (e.data === YT.PlayerState.ENDED) {
+                    ytPlayer.seekTo(0);
+                    ytPlayer.playVideo();
+                }
                 const btnMusic = document.getElementById('btn-music');
                 musicPlaying = e.data === YT.PlayerState.PLAYING;
                 btnMusic.textContent = musicPlaying ? '♫' : '♪';
