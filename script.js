@@ -3,16 +3,16 @@
 // ============================================================
 
 const CONFIG = {
-    // 구글 시트 웹 게시 CSV URL (파일 → 공유 → 웹에 게시 → CSV)
-    CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTB1FtRSqIlxFCrLI5wwTXxIz7HuyAYTFAz4PLwSRA-84W0gYYMy_z2XKhCsQB5I1vZxd5DC5bxoWRW/pub?output=csv',
+    // 접수현황 탭 CSV URL
+    CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTB1FtRSqIlxFCrLI5wwTXxIz7HuyAYTFAz4PLwSRA-84W0gYYMy_z2XKhCsQB5I1vZxd5DC5bxoWRW/pub?gid=1047086015&single=true&output=csv',
 
-    // 각 열 번호 (A=0, B=1, C=2, D=3 ...)
-    COL_NAME:      0,   // A열: 이름
-    COL_DATE:      1,   // B열: 날짜
-    COL_IMAGE_URL: 2,   // C열: 사진 URL (구글 드라이브 공유 링크)
-    COL_STORY:     3,   // D열: 소개/사연
+    // 실제 시트 열 순서 (A=0, B=1 ...)
+    COL_NAME:      1,   // B열: 성함
+    COL_DATE:      4,   // E열: 날짜
+    COL_PLACE:     5,   // F열: 장소
+    COL_IMAGE_URL: 7,   // H열: 구글 드라이브 링크
+    COL_STORY:     3,   // D열: 사연설명
 
-    // 헤더 행 수 (맨 위 제목 행, 보통 1)
     HEADER_ROWS: 1,
 };
 
@@ -47,14 +47,14 @@ function parseCSV(csv) {
         const cols = splitCSVLine(line);
         const name     = stripQuotes(cols[CONFIG.COL_NAME]      || '');
         const date     = stripQuotes(cols[CONFIG.COL_DATE]       || '');
+        const place    = stripQuotes(cols[CONFIG.COL_PLACE]      || '');
         const rawUrl   = stripQuotes(cols[CONFIG.COL_IMAGE_URL]  || '');
         const story    = stripQuotes(cols[CONFIG.COL_STORY]      || '');
         const imageUrl = normalizeDriveUrl(rawUrl);
 
-        // 사진 URL이 없으면 행 전체 skip
         if (!imageUrl) continue;
 
-        result.push({ name, date, imageUrl, story });
+        result.push({ name, date, place, imageUrl, story });
     }
 
     return result;
@@ -135,7 +135,7 @@ function renderGallery(data) {
         card.setAttribute('tabindex', '0');
         card.setAttribute('aria-label', `${item.name || '사진'} 크게 보기`);
 
-        const hasBody = item.name || item.date || item.story;
+        const hasBody = item.name || item.date || item.story || item.place;
 
         card.innerHTML = `
             <div class="card-img-wrap">
@@ -147,8 +147,8 @@ function renderGallery(data) {
             </div>
             ${hasBody ? `
             <div class="card-body">
-                ${item.date ? `<p class="card-date">${escapeHtml(formatDate(item.date))}</p>` : ''}
-                ${item.name ? `<p class="card-name">${escapeHtml(item.name)}</p>` : ''}
+                <p class="card-meta">${[item.date, item.place].filter(Boolean).map(escapeHtml).join(' · ')}</p>
+                ${item.name  ? `<p class="card-name">${escapeHtml(item.name)}</p>` : ''}
                 ${item.story ? `<p class="card-story">${escapeHtml(item.story)}</p>` : ''}
             </div>` : ''}
         `;
@@ -218,7 +218,8 @@ function updateLightbox() {
         el.style.display = text ? '' : 'none';
     };
 
-    setEl('lb-date',  formatDate(item.date));
+    const meta = [formatDate(item.date), item.place].filter(Boolean).join(' · ');
+    setEl('lb-date',  meta);
     setEl('lb-name',  item.name);
     setEl('lb-story', item.story);
 
