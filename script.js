@@ -274,11 +274,6 @@ function startSlideshow() {
     if (items.length === 0) return;
     slideshowActive = true;
 
-    const btn = document.getElementById('btn-slideshow');
-    btn.textContent = '⏸';
-    btn.classList.add('active');
-
-    // 라이트박스가 닫혀있으면 첫 사진부터
     if (document.getElementById('lightbox').classList.contains('hidden')) {
         openLightbox(0);
     }
@@ -290,11 +285,6 @@ function startSlideshow() {
 function stopSlideshow() {
     slideshowActive = false;
     clearTimeout(slideshowTimer);
-
-    const btn = document.getElementById('btn-slideshow');
-    btn.textContent = '▶';
-    btn.classList.remove('active');
-
     document.getElementById('lb-progress-wrap').classList.remove('visible');
     resetProgress();
 }
@@ -409,7 +399,10 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.getElementById('btn-music').addEventListener('click', toggleMusic);
-document.getElementById('btn-slideshow').addEventListener('click', toggleSlideshow);
+document.getElementById('btn-enjoy').addEventListener('click', () => {
+    toggleMusic();
+    startSlideshow();
+});
 
 // 모바일 스와이프
 let touchStartX = 0;

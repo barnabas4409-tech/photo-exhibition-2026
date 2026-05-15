@@ -135,48 +135,54 @@ body {
     bottom: 3rem; left: 50%;
     transform: translateX(-50%);
     z-index: 1;
-}
-
-.btn-enter {
     display: flex;
-    flex-direction: column;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn-hero {
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: opacity 0.3s var(--ease);
-}
-
-.btn-enter:hover { opacity: 0.75; }
-
-.btn-enter-text {
-    font-size: 0.78rem;
-    letter-spacing: 0.25em;
+    justify-content: center;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 0.82rem;
     font-weight: 500;
-    color: var(--text-sub);
-    border: 1px solid rgba(184,146,74,0.4);
-    padding: 12px 32px;
+    letter-spacing: 0.2em;
+    padding: 14px 32px;
     border-radius: 2px;
-    transition: border-color 0.3s, color 0.3s, background 0.3s;
-    background: rgba(255,255,255,0.6);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.25s var(--ease), border-color 0.25s var(--ease),
+                color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+    white-space: nowrap;
 }
 
-.btn-enter:hover .btn-enter-text {
+.btn-hero-primary {
+    background: var(--gold);
+    border: 1px solid var(--gold);
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(184,146,74,0.3);
+}
+
+.btn-hero-primary:hover {
+    background: var(--gold-dim);
+    border-color: var(--gold-dim);
+    box-shadow: 0 6px 24px rgba(184,146,74,0.4);
+}
+
+.btn-hero-secondary {
+    background: rgba(255,255,255,0.6);
+    border: 1px solid rgba(184,146,74,0.45);
+    color: var(--text-sub);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.btn-hero-secondary:hover {
+    background: rgba(255,255,255,0.9);
     border-color: var(--gold);
     color: var(--gold-dim);
-    background: rgba(255,255,255,0.9);
-}
-
-.btn-enter-arrow {
-    font-size: 1rem;
-    color: var(--gold);
-    opacity: 0.4;
-    animation: float 2.4s ease-in-out infinite;
-}
-
-@keyframes float {
-    0%,100% { transform: translateY(0); opacity: 0.3; }
-    50%      { transform: translateY(8px); opacity: 0.8; }
 }
 
 /* ==================== GALLERY SECTION ==================== */
@@ -528,18 +534,12 @@ body {
     color: var(--text-faint);
 }
 
-/* ==================== 떠있는 버튼 (음악 / 슬라이드쇼) ==================== */
-.fab-wrap {
+/* ==================== 떠있는 음악 버튼 ==================== */
+.fab {
     position: fixed;
     bottom: 28px;
     right: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
     z-index: 8000;
-}
-
-.fab {
     width: 48px; height: 48px;
     border-radius: 50%;
     border: 1px solid rgba(184,146,74,0.35);

@@ -19,10 +19,8 @@
             <p class="hero-verse">"즐거워하는 자들과 함께 즐거워하고<br>우는 자들과 함께 울라"<br><span class="hero-verse-ref">로마서 12:15</span></p>
         </div>
         <div class="hero-actions">
-            <a href="#gallery-section" class="btn-enter">
-                <span class="btn-enter-text">사진전 입장하기</span>
-                <span class="btn-enter-arrow">↓</span>
-            </a>
+            <button id="btn-enjoy" class="btn-hero btn-hero-primary">사진 감상하기</button>
+            <a href="#gallery-section" class="btn-hero btn-hero-secondary">전체 사진 보기</a>
         </div>
     </header>
 
@@ -92,11 +90,8 @@
     <!-- 유튜브 숨김 플레이어 -->
     <div id="yt-player" style="position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;top:-9999px;"></div>
 
-    <!-- 떠있는 버튼들 -->
-    <div class="fab-wrap">
-        <button id="btn-music" class="fab fab-music" aria-label="음악 재생/정지" title="음악">♪</button>
-        <button id="btn-slideshow" class="fab fab-slideshow" aria-label="슬라이드쇼" title="슬라이드쇼">▶</button>
-    </div>
+    <!-- 음악 토글 (우측 하단 작게) -->
+    <button id="btn-music" class="fab fab-music" aria-label="음악 재생/정지" title="음악">♪</button>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="script.js"></script>
