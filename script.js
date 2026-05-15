@@ -99,16 +99,13 @@ function stripQuotes(s) {
 function normalizeDriveUrl(url) {
     if (!url) return '';
 
-    // 이미 직접 URL 형식이면 그대로 사용
-    if (url.includes('drive.google.com/uc')) return url;
-
-    // Google Drive 공유 링크 → 직접 이미지 URL
+    // Google Drive 파일 ID 추출
     const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
     if (m) {
-        return `https://drive.google.com/uc?export=view&id=${m[1]}`;
+        // thumbnail API: 모바일에서도 안정적으로 로드됨
+        return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1200`;
     }
 
-    // 그 외 외부 URL은 그대로 사용
     return url;
 }
 
