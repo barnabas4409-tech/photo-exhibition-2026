@@ -37,14 +37,11 @@ async function fetchData() {
 //  CSV 파싱
 // ============================================================
 function parseCSV(csv) {
-    const lines = csv.split('\n');
+    const rows = splitCSVIntoRows(csv);
     const result = [];
 
-    for (let i = CONFIG.HEADER_ROWS; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (!line) continue;
-
-        const cols = splitCSVLine(line);
+    for (let i = CONFIG.HEADER_ROWS; i < rows.length; i++) {
+        const cols = splitCSVLine(rows[i]);
         const name     = stripQuotes(cols[CONFIG.COL_NAME]      || '');
         const date     = stripQuotes(cols[CONFIG.COL_DATE]       || '');
         const place    = stripQuotes(cols[CONFIG.COL_PLACE]      || '');
@@ -59,6 +56,34 @@ function parseCSV(csv) {
     }
 
     return result;
+}
+
+// 따옴표 안의 줄바꿈을 보존하며 CSV를 행으로 분리
+function splitCSVIntoRows(csv) {
+    const rows = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < csv.length; i++) {
+        const c = csv[i];
+        if (c === '"') {
+            if (inQuotes && csv[i + 1] === '"') {
+                current += '""';
+                i++;
+            } else {
+                inQuotes = !inQuotes;
+                current += c;
+            }
+        } else if ((c === '\n' || c === '\r') && !inQuotes) {
+            if (c === '\r' && csv[i + 1] === '\n') i++;
+            if (current.trim()) rows.push(current);
+            current = '';
+        } else {
+            current += c;
+        }
+    }
+    if (current.trim()) rows.push(current);
+    return rows;
 }
 
 function splitCSVLine(line) {
