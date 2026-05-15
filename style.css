@@ -363,6 +363,9 @@ body {
     display: block;
     transition: transform 0.4s var(--ease);
     filter: sepia(0.04);
+    -webkit-user-drag: none;
+    user-select: none;
+    pointer-events: none;
 }
 
 .card:hover .card-img-wrap img {
@@ -462,6 +465,8 @@ body {
         0 24px 80px rgba(0,0,0,0.9);
     outline: 1px solid rgba(200,169,110,0.1);
     outline-offset: -6px;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .lb-info { text-align: center; padding: 0 20px; }

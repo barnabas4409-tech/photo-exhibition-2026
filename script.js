@@ -511,4 +511,12 @@ async function init() {
     }
 }
 
+// 이미지 우클릭 · 드래그 저장 차단
+document.addEventListener('contextmenu', (e) => {
+    if (e.target.tagName === 'IMG') e.preventDefault();
+});
+document.addEventListener('dragstart', (e) => {
+    if (e.target.tagName === 'IMG') e.preventDefault();
+});
+
 init();
