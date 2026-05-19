@@ -311,6 +311,8 @@ let slideshowActive  = false;
 
 function startSlideshow() {
     if (items.length === 0) return;
+    // 기존 타이머 완전히 정리 후 시작
+    clearTimeout(slideshowTimer);
     slideshowActive = true;
 
     if (document.getElementById('lightbox').classList.contains('hidden')) {
@@ -330,8 +332,10 @@ function stopSlideshow() {
 }
 
 function scheduleNext() {
+    // 중복 타이머 방지: 항상 이전 것 먼저 제거
+    clearTimeout(slideshowTimer);
     resetProgress();
-    // 다음 프레임에 애니메이션 시작 (리플로우 트리거)
+
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             const bar = document.getElementById('lb-progress-bar');
