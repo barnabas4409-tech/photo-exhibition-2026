@@ -259,7 +259,9 @@ function showSelectedPanel() {
     const list  = document.getElementById('sp-list');
     const count = document.getElementById('sp-count');
 
-    const selectedItems = items.filter(it => selected.has(it.imageUrl));
+    const selectedItems = items
+        .filter(it => selected.has(it.imageUrl))
+        .sort((a, b) => (parseInt(a.num) || 0) - (parseInt(b.num) || 0));
     count.textContent = `(${selectedItems.length}개)`;
 
     list.innerHTML = selectedItems.map((it, i) => `
