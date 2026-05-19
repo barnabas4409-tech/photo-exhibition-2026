@@ -7,6 +7,7 @@ const CONFIG = {
     CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTB1FtRSqIlxFCrLI5wwTXxIz7HuyAYTFAz4PLwSRA-84W0gYYMy_z2XKhCsQB5I1vZxd5DC5bxoWRW/pub?gid=1047086015&single=true&output=csv',
 
     // 실제 시트 열 순서 (A=0, B=1 ...)
+    COL_NUM:       0,   // A열: 번호
     COL_NAME:      1,   // B열: 성함
     COL_DATE:      4,   // E열: 날짜
     COL_PLACE:     5,   // F열: 장소
@@ -43,6 +44,7 @@ function parseCSV(csv) {
 
     for (let i = CONFIG.HEADER_ROWS; i < rows.length; i++) {
         const cols = splitCSVLine(rows[i]);
+        const num      = stripQuotes(cols[CONFIG.COL_NUM]        || '');
         const name     = stripQuotes(cols[CONFIG.COL_NAME]      || '');
         const date     = stripQuotes(cols[CONFIG.COL_DATE]       || '');
         const place    = stripQuotes(cols[CONFIG.COL_PLACE]      || '');
@@ -57,7 +59,7 @@ function parseCSV(csv) {
         // J열에 X 입력 시 차단
         if (block.trim().toUpperCase() === 'X') continue;
 
-        result.push({ name, date, place, imageUrl, story });
+        result.push({ num, name, date, place, imageUrl, story });
     }
 
     return result;
@@ -264,7 +266,7 @@ function showSelectedPanel() {
         <div class="sp-item">
             <span class="sp-item-num">${i + 1}</span>
             <div class="sp-item-info">
-                <p class="sp-item-name">${escapeHtml(it.name || '(이름 없음)')}</p>
+                <p class="sp-item-name">${escapeHtml(it.name || '(이름 없음)')}${it.num ? ` <span style="color:var(--text-faint);font-weight:300;font-size:0.75rem;">(접수 ${escapeHtml(it.num)}번)</span>` : ''}</p>
                 <p class="sp-item-meta">${[it.date, it.place].filter(Boolean).map(escapeHtml).join(' · ')}</p>
                 ${it.story ? `<p class="sp-item-story">${escapeHtml(it.story)}</p>` : ''}
             </div>
@@ -280,7 +282,7 @@ function copySelectedToClipboard() {
         `[선택한 사진 — 분당우리교회 창립 24주년 사진전]`,
         `총 ${selectedItems.length}개\n`,
         ...selectedItems.map((it, i) => {
-            const lines = [`${i + 1}. ${it.name || '(이름 없음)'}`];
+            const lines = [`${i + 1}. ${it.name || '(이름 없음)'}${it.num ? ` (접수 ${it.num}번)` : ''}`];
             if (it.date || it.place) lines.push(`   ${[it.date, it.place].filter(Boolean).join(' · ')}`);
             if (it.story) lines.push(`   "${it.story}"`);
             lines.push(`   🔗 ${it.imageUrl}`);
