@@ -417,6 +417,47 @@ body {
     overflow-wrap: break-word;
 }
 
+/* ==================== 페이지네이션 ==================== */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 52px 0 20px;
+}
+
+.page-btn {
+    background: none;
+    border: 1px solid rgba(184,146,74,0.4);
+    color: var(--text-sub);
+    font-family: 'Pretendard', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    padding: 10px 24px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+}
+
+.page-btn:hover:not(:disabled) {
+    border-color: var(--gold);
+    color: var(--gold-dim);
+}
+
+.page-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.page-info {
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    letter-spacing: 0.1em;
+    min-width: 60px;
+    text-align: center;
+}
+
 /* ==================== LIGHTBOX ==================== */
 .lightbox {
     position: fixed;

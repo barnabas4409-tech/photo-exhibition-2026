@@ -23,6 +23,9 @@ const CONFIG = {
 // ============================================================
 let items = [];
 let currentIndex = 0;
+const ITEMS_PER_PAGE = 50;
+let currentPage = 1;
+let activeQuery = '';
 
 // ============================================================
 //  구글 시트 데이터 가져오기
@@ -154,11 +157,31 @@ function formatDate(dateStr) {
 // ============================================================
 //  갤러리 렌더링
 // ============================================================
-function renderGallery(data) {
+function getFilteredItems() {
+    if (!activeQuery) return items;
+    const q = activeQuery.toLowerCase();
+    return items.filter(it =>
+        (it.name  || '').toLowerCase().includes(q) ||
+        (it.date  || '').toLowerCase().includes(q) ||
+        (it.story || '').toLowerCase().includes(q)
+    );
+}
+
+function renderGallery(entries) {
     const gallery = document.getElementById('gallery');
     gallery.innerHTML = '';
 
-    data.forEach((item, index) => {
+    if (entries.length === 0) {
+        const msg = document.createElement('p');
+        msg.className = 'search-no-result';
+        msg.textContent = activeQuery
+            ? `"${activeQuery}"에 해당하는 사진이 없습니다.`
+            : '등록된 사진이 없습니다.';
+        gallery.appendChild(msg);
+        return;
+    }
+
+    entries.forEach(({ item, globalIndex }) => {
         const card = document.createElement('article');
         card.className = 'card';
         card.setAttribute('role', 'listitem');
@@ -184,7 +207,6 @@ function renderGallery(data) {
             </div>` : ''}
         `;
 
-        // 이미지 로드 실패 시 이미지 영역만 교체 (카드는 유지)
         const img = card.querySelector('img');
         if (img) {
             img.addEventListener('error', () => {
@@ -193,11 +215,11 @@ function renderGallery(data) {
             });
         }
 
-        card.addEventListener('click', () => openLightbox(index));
+        card.addEventListener('click', () => openLightbox(globalIndex));
         card.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                openLightbox(index);
+                openLightbox(globalIndex);
             }
         });
 
@@ -205,14 +227,40 @@ function renderGallery(data) {
     });
 }
 
-// Fisher-Yates 셔플
-function shuffle(arr) {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
+function renderView() {
+    const filtered = getFilteredItems();
+    const isSearching = activeQuery.length > 0;
+    const countEl = document.getElementById('search-count');
+
+    let entries;
+    if (isSearching) {
+        entries = filtered.map(item => ({ item, globalIndex: items.indexOf(item) }));
+        countEl.textContent = `${filtered.length}개의 사진`;
+        countEl.classList.add('visible');
+    } else {
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        entries = filtered.slice(start, start + ITEMS_PER_PAGE)
+                         .map((item, i) => ({ item, globalIndex: start + i }));
+        countEl.classList.remove('visible');
     }
-    return a;
+
+    renderGallery(entries);
+    updatePagination(filtered.length, isSearching);
+}
+
+function updatePagination(total, isSearching) {
+    const pag = document.getElementById('pagination');
+    const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+
+    if (isSearching || totalPages <= 1) {
+        pag.classList.add('hidden');
+        return;
+    }
+
+    pag.classList.remove('hidden');
+    document.getElementById('page-info').textContent = `${currentPage} / ${totalPages}`;
+    document.getElementById('page-prev').disabled = currentPage <= 1;
+    document.getElementById('page-next').disabled = currentPage >= totalPages;
 }
 
 function escapeHtml(str) {
@@ -463,47 +511,11 @@ function toggleSlideshow() {
 //  검색
 // ============================================================
 function initSearch() {
-    const input    = document.getElementById('search-input');
-    const countEl  = document.getElementById('search-count');
-    const gallery  = document.getElementById('gallery');
-
+    const input = document.getElementById('search-input');
     input.addEventListener('input', () => {
-        const query = input.value.trim().toLowerCase();
-        const cards = gallery.querySelectorAll('.card');
-
-        // 기존 "결과 없음" 메시지 제거
-        const prev = gallery.querySelector('.search-no-result');
-        if (prev) prev.remove();
-
-        let visible = 0;
-        cards.forEach((card, idx) => {
-            const item = items[idx];
-            if (!item) return;
-            const match =
-                !query ||
-                item.name.toLowerCase().includes(query)  ||
-                item.date.toLowerCase().includes(query)  ||
-                item.story.toLowerCase().includes(query);
-
-            card.style.display = match ? '' : 'none';
-            if (match) visible++;
-        });
-
-        // 검색 결과 수 표시
-        if (query) {
-            countEl.textContent = `${visible}개의 사진`;
-            countEl.classList.add('visible');
-        } else {
-            countEl.classList.remove('visible');
-        }
-
-        // 결과 없을 때
-        if (query && visible === 0) {
-            const msg = document.createElement('p');
-            msg.className = 'search-no-result';
-            msg.textContent = `"${input.value}" 에 해당하는 사진이 없습니다.`;
-            gallery.appendChild(msg);
-        }
+        activeQuery = input.value.trim();
+        currentPage = 1;
+        renderView();
     });
 }
 
@@ -532,6 +544,20 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape')     { stopSlideshow(); closeLightbox(); }
     if (e.key === 'ArrowLeft')  { if (slideshowActive) { clearTimeout(slideshowTimer); scheduleNext(); } showPrev(); }
     if (e.key === 'ArrowRight') { if (slideshowActive) { clearTimeout(slideshowTimer); scheduleNext(); } showNext(); }
+});
+
+document.getElementById('page-prev').addEventListener('click', () => {
+    if (currentPage <= 1) return;
+    currentPage--;
+    renderView();
+    document.getElementById('gallery-section').scrollIntoView({ behavior: 'smooth' });
+});
+document.getElementById('page-next').addEventListener('click', () => {
+    const totalPages = Math.ceil(getFilteredItems().length / ITEMS_PER_PAGE);
+    if (currentPage >= totalPages) return;
+    currentPage++;
+    renderView();
+    document.getElementById('gallery-section').scrollIntoView({ behavior: 'smooth' });
 });
 
 document.getElementById('btn-music').addEventListener('click', toggleMusic);
@@ -601,7 +627,7 @@ async function init() {
     }
 
     try {
-        items = shuffle(await fetchData());
+        items = (await fetchData()).sort((a, b) => (parseInt(a.num) || 0) - (parseInt(b.num) || 0));
         loadingEl.classList.add('hidden');
 
         if (items.length === 0) {
@@ -610,7 +636,7 @@ async function init() {
             return;
         }
 
-        renderGallery(items);
+        renderView();
         initSearch();
         updateSelectedFab();
 
