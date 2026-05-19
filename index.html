@@ -72,6 +72,7 @@
                 <p id="lb-date" class="lb-date"></p>
                 <p id="lb-name" class="lb-name"></p>
                 <p id="lb-story" class="lb-story"></p>
+                <button id="lb-select" class="lb-select-btn">☆ 선택하기</button>
             </div>
         </div>
 
@@ -93,6 +94,22 @@
 
     <!-- 음악 토글 (우측 하단 작게) -->
     <button id="btn-music" class="fab fab-music" aria-label="음악 재생/정지" title="음악">♪</button>
+    <button id="btn-selected-fab" class="fab fab-selected hidden" aria-label="선택 목록 보기">★ <span id="selected-count">0</span></button>
+
+    <!-- 선택 목록 패널 -->
+    <div id="selected-panel" class="selected-panel hidden" role="dialog" aria-label="선택한 사진 목록">
+        <div class="sp-inner">
+            <div class="sp-header">
+                <h3 class="sp-title">선택한 사진 <span id="sp-count"></span></h3>
+                <button id="sp-close" class="sp-close">✕</button>
+            </div>
+            <div id="sp-list" class="sp-list"></div>
+            <div class="sp-footer">
+                <button id="btn-copy-selected" class="sp-btn sp-btn-primary">클립보드 복사</button>
+                <button id="btn-clear-selected" class="sp-btn sp-btn-ghost">선택 초기화</button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="script.js"></script>

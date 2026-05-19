@@ -540,6 +540,181 @@ body {
     user-select: none;
 }
 
+/* ==================== 라이트박스 선택 버튼 ==================== */
+.lb-select-btn {
+    margin-top: 1.4rem;
+    background: none;
+    border: 1px solid rgba(184,146,74,0.4);
+    color: rgba(255,255,255,0.55);
+    font-family: 'Pretendard', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.15em;
+    padding: 9px 24px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+}
+.lb-select-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+.lb-select-btn.selected {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #fff;
+}
+
+/* ==================== 선택 목록 FAB ==================== */
+.fab-selected {
+    position: fixed;
+    bottom: 86px;
+    right: 24px;
+    z-index: 8000;
+    font-size: 0.78rem;
+    font-family: 'Pretendard', sans-serif;
+    letter-spacing: 0.05em;
+    padding: 0 16px;
+    width: auto;
+    gap: 6px;
+}
+
+/* ==================== 선택 목록 패널 ==================== */
+.selected-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 9500;
+    background: rgba(8,7,6,0.6);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+    animation: lb-in 0.2s var(--ease);
+}
+
+.sp-inner {
+    background: var(--cream);
+    width: 100%;
+    max-width: 560px;
+    max-height: 80vh;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.sp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid rgba(184,146,74,0.15);
+    flex-shrink: 0;
+}
+
+.sp-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.03em;
+}
+
+.sp-title span {
+    color: var(--gold-dim);
+    font-weight: 400;
+    font-size: 0.85rem;
+}
+
+.sp-close {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: var(--text-faint);
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+.sp-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 12px 0;
+}
+
+.sp-item {
+    padding: 14px 24px;
+    border-bottom: 1px solid rgba(184,146,74,0.08);
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.sp-item-num {
+    font-size: 0.72rem;
+    color: var(--gold-dim);
+    font-weight: 600;
+    min-width: 20px;
+    padding-top: 2px;
+}
+
+.sp-item-info { flex: 1; }
+
+.sp-item-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+}
+
+.sp-item-meta {
+    font-size: 0.75rem;
+    color: var(--text-faint);
+    margin-bottom: 5px;
+}
+
+.sp-item-story {
+    font-size: 0.82rem;
+    color: var(--text-sub);
+    line-height: 1.7;
+    word-break: keep-all;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.sp-footer {
+    padding: 16px 24px;
+    border-top: 1px solid rgba(184,146,74,0.15);
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.sp-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 2px;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+}
+
+.sp-btn-primary {
+    background: var(--gold);
+    border: 1px solid var(--gold);
+    color: #fff;
+}
+.sp-btn-primary:hover { background: var(--gold-dim); }
+
+.sp-btn-ghost {
+    background: none;
+    border: 1px solid rgba(184,146,74,0.35);
+    color: var(--text-sub);
+}
+.sp-btn-ghost:hover { border-color: var(--gold); color: var(--gold-dim); }
+
 /* ==================== FOOTER ==================== */
 .footer {
     text-align: center;
