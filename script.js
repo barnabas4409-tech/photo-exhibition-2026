@@ -264,11 +264,11 @@ function showSelectedPanel() {
         .sort((a, b) => (parseInt(a.num) || 0) - (parseInt(b.num) || 0));
     count.textContent = `(${selectedItems.length}개)`;
 
-    list.innerHTML = selectedItems.map((it, i) => `
+    list.innerHTML = selectedItems.map((it) => `
         <div class="sp-item">
-            <span class="sp-item-num">${i + 1}</span>
+            <span class="sp-item-num">${escapeHtml(it.num || '?')}</span>
             <div class="sp-item-info">
-                <p class="sp-item-name">${escapeHtml(it.name || '(이름 없음)')}${it.num ? ` <span style="color:var(--text-faint);font-weight:300;font-size:0.75rem;">(접수 ${escapeHtml(it.num)}번)</span>` : ''}</p>
+                <p class="sp-item-name">${escapeHtml(it.name || '(이름 없음)')}</p>
                 <p class="sp-item-meta">${[it.date, it.place].filter(Boolean).map(escapeHtml).join(' · ')}</p>
                 ${it.story ? `<p class="sp-item-story">${escapeHtml(it.story)}</p>` : ''}
             </div>
@@ -279,12 +279,14 @@ function showSelectedPanel() {
 }
 
 function copySelectedToClipboard() {
-    const selectedItems = items.filter(it => selected.has(it.imageUrl));
+    const selectedItems = items
+        .filter(it => selected.has(it.imageUrl))
+        .sort((a, b) => (parseInt(a.num) || 0) - (parseInt(b.num) || 0));
     const text = [
         `[선택한 사진 — 분당우리교회 창립 24주년 사진전]`,
         `총 ${selectedItems.length}개\n`,
-        ...selectedItems.map((it, i) => {
-            const lines = [`${i + 1}. ${it.name || '(이름 없음)'}${it.num ? ` (접수 ${it.num}번)` : ''}`];
+        ...selectedItems.map((it) => {
+            const lines = [`접수 ${it.num}번. ${it.name || '(이름 없음)'}`];
             if (it.date || it.place) lines.push(`   ${[it.date, it.place].filter(Boolean).join(' · ')}`);
             if (it.story) lines.push(`   "${it.story}"`);
             lines.push(`   🔗 ${it.imageUrl}`);
