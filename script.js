@@ -203,6 +203,16 @@ function renderGallery(data) {
     });
 }
 
+// Fisher-Yates 셔플
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
 function escapeHtml(str) {
     return String(str)
         .replace(/&/g,  '&amp;')
@@ -493,7 +503,7 @@ async function init() {
     }
 
     try {
-        items = await fetchData();
+        items = shuffle(await fetchData());
         loadingEl.classList.add('hidden');
 
         if (items.length === 0) {
