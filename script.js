@@ -336,6 +336,7 @@ function updateLightbox() {
         el.style.display = text ? '' : 'none';
     };
 
+    setEl('lb-num',   item.num ? `접수 ${item.num}번` : '');
     const meta = [formatDate(item.date), item.place].filter(Boolean).join(' · ');
     setEl('lb-date',  meta);
     setEl('lb-name',  item.name);

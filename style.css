@@ -471,6 +471,14 @@ body {
 
 .lb-info { text-align: center; padding: 0 20px; }
 
+.lb-num {
+    color: var(--gold);
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+}
+
 .lb-date {
     color: rgba(255,255,255,0.6);
     font-size: 0.82rem;
