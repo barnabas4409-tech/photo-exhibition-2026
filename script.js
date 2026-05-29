@@ -272,82 +272,6 @@ function escapeHtml(str) {
         .replace(/'/g,  '&#39;');
 }
 
-// ============================================================
-//  사진 선택 (디자인팀 전달용)
-// ============================================================
-let selected = new Set(JSON.parse(localStorage.getItem('photo-selected') || '[]'));
-
-function toggleSelect() {
-    const key = items[currentIndex].imageUrl;
-    if (selected.has(key)) selected.delete(key);
-    else selected.add(key);
-    localStorage.setItem('photo-selected', JSON.stringify([...selected]));
-    updateSelectBtn();
-    updateSelectedFab();
-}
-
-function updateSelectBtn() {
-    const btn = document.getElementById('lb-select');
-    if (!btn) return;
-    const isSelected = selected.has(items[currentIndex]?.imageUrl);
-    btn.textContent = isSelected ? '★ 선택됨' : '☆ 선택하기';
-    btn.classList.toggle('selected', isSelected);
-}
-
-function updateSelectedFab() {
-    const fab = document.getElementById('btn-selected-fab');
-    const countEl = document.getElementById('selected-count');
-    const n = selected.size;
-    fab.classList.toggle('hidden', n === 0);
-    countEl.textContent = n;
-}
-
-function showSelectedPanel() {
-    const panel = document.getElementById('selected-panel');
-    const list  = document.getElementById('sp-list');
-    const count = document.getElementById('sp-count');
-
-    const selectedItems = items
-        .filter(it => selected.has(it.imageUrl))
-        .sort((a, b) => (parseInt(a.num) || 0) - (parseInt(b.num) || 0));
-    count.textContent = `(${selectedItems.length}개)`;
-
-    list.innerHTML = selectedItems.map((it) => `
-        <div class="sp-item">
-            <span class="sp-item-num">${escapeHtml(it.num || '?')}</span>
-            <div class="sp-item-info">
-                <p class="sp-item-name">${escapeHtml(it.name || '(이름 없음)')}</p>
-                <p class="sp-item-meta">${[it.date, it.place].filter(Boolean).map(escapeHtml).join(' · ')}</p>
-                ${it.story ? `<p class="sp-item-story">${escapeHtml(it.story)}</p>` : ''}
-            </div>
-        </div>
-    `).join('');
-
-    panel.classList.remove('hidden');
-}
-
-function copySelectedToClipboard() {
-    const selectedItems = items
-        .filter(it => selected.has(it.imageUrl))
-        .sort((a, b) => (parseInt(a.num) || 0) - (parseInt(b.num) || 0));
-    const text = [
-        `[선택한 사진 — 분당우리교회 창립 24주년 사진전]`,
-        `총 ${selectedItems.length}개\n`,
-        ...selectedItems.map((it) => {
-            const lines = [`접수 ${it.num}번. ${it.name || '(이름 없음)'}`];
-            if (it.date || it.place) lines.push(`   ${[it.date, it.place].filter(Boolean).join(' · ')}`);
-            if (it.story) lines.push(`   "${it.story}"`);
-            lines.push(`   🔗 ${it.imageUrl}`);
-            return lines.join('\n');
-        })
-    ].join('\n');
-
-    navigator.clipboard.writeText(text).then(() => {
-        const btn = document.getElementById('btn-copy-selected');
-        btn.textContent = '복사 완료! ✓';
-        setTimeout(() => { btn.textContent = '클립보드 복사'; }, 2000);
-    });
-}
 
 // ============================================================
 //  라이트박스
@@ -396,8 +320,6 @@ function updateLightbox() {
 
     document.getElementById('lb-counter').textContent =
         `${currentIndex + 1} / ${items.length}`;
-
-    updateSelectBtn();
 }
 
 // ============================================================
@@ -565,22 +487,6 @@ document.getElementById('btn-enjoy').addEventListener('click', () => {
     toggleMusic();
     startSlideshow();
 });
-document.getElementById('lb-select').addEventListener('click', toggleSelect);
-document.getElementById('btn-selected-fab').addEventListener('click', showSelectedPanel);
-document.getElementById('sp-close').addEventListener('click', () => {
-    document.getElementById('selected-panel').classList.add('hidden');
-});
-document.getElementById('btn-copy-selected').addEventListener('click', copySelectedToClipboard);
-document.getElementById('btn-clear-selected').addEventListener('click', () => {
-    if (!confirm('선택을 모두 초기화할까요?')) return;
-    selected.clear();
-    localStorage.removeItem('photo-selected');
-    updateSelectedFab();
-    document.getElementById('selected-panel').classList.add('hidden');
-});
-document.getElementById('selected-panel').addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) document.getElementById('selected-panel').classList.add('hidden');
-});
 
 // 모바일 스와이프
 let touchStartX = 0;
@@ -638,7 +544,6 @@ async function init() {
 
         renderView();
         initSearch();
-        updateSelectedFab();
 
     } catch (err) {
         console.error('[사진전] 데이터 로드 실패:', err);
