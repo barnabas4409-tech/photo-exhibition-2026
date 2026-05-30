@@ -28,8 +28,14 @@
     <main>
         <section class="gallery-section" id="gallery-section">
             <div class="section-header">
-                <h2>함께한 순간들</h2>
-                <p>교우들이 나눠주신 소중한 사진과 사연입니다</p>
+                <div>
+                    <h2>함께한 순간들</h2>
+                    <p>교우들이 나눠주신 소중한 사진과 사연입니다</p>
+                </div>
+                <div class="view-toggle">
+                    <button id="btn-view-grid" class="btn-view active" title="그리드 뷰">▦</button>
+                    <button id="btn-view-timeline" class="btn-view" title="타임라인 뷰">≡</button>
+                </div>
             </div>
 
             <!-- 검색창 -->
@@ -67,6 +73,7 @@
     <!-- Lightbox -->
     <div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="사진 크게 보기">
         <button class="lb-close" id="lb-close" aria-label="닫기">✕</button>
+        <button class="lb-slideshow-toggle" id="lb-slideshow-toggle" aria-label="슬라이드쇼 일시정지">▶</button>
         <button class="lb-prev" id="lb-prev" aria-label="이전 사진">‹</button>
         <button class="lb-next" id="lb-next" aria-label="다음 사진">›</button>
 
@@ -79,12 +86,27 @@
                 <p id="lb-date" class="lb-date"></p>
                 <p id="lb-name" class="lb-name"></p>
                 <p id="lb-story" class="lb-story"></p>
+                <div id="lb-related" class="lb-related" style="display:none;"></div>
+                <div class="lb-controls">
+                    <div class="lb-speed-btns">
+                        <button id="lb-speed-3" class="lb-speed-btn">3초</button>
+                        <button id="lb-speed-5" class="lb-speed-btn active">5초</button>
+                        <button id="lb-speed-10" class="lb-speed-btn">10초</button>
+                    </div>
+                    <span id="lb-music-time" class="lb-music-time"></span>
+                </div>
             </div>
         </div>
 
         <p class="lb-counter" id="lb-counter"></p>
         <div class="lb-progress-wrap" id="lb-progress-wrap">
             <div class="lb-progress-bar" id="lb-progress-bar"></div>
+        </div>
+        <div class="lb-bottom-nav">
+            <button id="lbn-prev" aria-label="이전 사진">‹</button>
+            <button id="lbn-slideshow" aria-label="슬라이드쇼 일시정지">▶</button>
+            <button id="lbn-close" aria-label="닫기">✕</button>
+            <button id="lbn-next" aria-label="다음 사진">›</button>
         </div>
     </div>
 

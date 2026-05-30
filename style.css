@@ -194,8 +194,16 @@ body {
 }
 
 .section-header {
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
     margin-bottom: 64px;
+}
+
+.section-header > div:first-child {
+    flex: 1;
+    text-align: center;
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
@@ -572,8 +580,46 @@ body {
     color: rgba(255,255,255,0.2);
     line-height: 1;
 }
-.lb-prev { left: 20px; }
-.lb-next { right: 20px; }
+.lb-prev {
+    left: 20px;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+.lb-next {
+    right: 20px;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+@media (max-width: 600px) {
+    .lb-prev, .lb-next { display: none; }
+}
+
+.lb-slideshow-toggle {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9001;
+    width: 44px;
+    height: 44px;
+    background: rgba(184,146,74,0.15);
+    border: 1px solid rgba(184,146,74,0.3);
+    border-radius: 50%;
+    color: rgba(245,242,238,0.7);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lb-slideshow-toggle:hover {
+    background: rgba(184,146,74,0.3);
+    border-color: var(--gold);
+    color: var(--white);
+}
 .lb-prev:hover, .lb-next:hover {
     color: var(--white-dim);
     background: rgba(255,255,255,0.04);
@@ -587,6 +633,245 @@ body {
     font-size: 0.72rem;
     letter-spacing: 0.2em;
     user-select: none;
+}
+
+/* ==================== 뷰 전환 버튼 ==================== */
+.view-toggle {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.btn-view {
+    background: none;
+    border: 1px solid rgba(184,146,74,0.2);
+    color: var(--text-faint);
+    font-size: 1.2rem;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s var(--ease);
+}
+
+.btn-view:hover {
+    border-color: var(--gold);
+    color: var(--gold-dim);
+}
+
+.btn-view.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #fff;
+}
+
+/* ==================== 타임라인 뷰 ==================== */
+.timeline-group {
+    margin-bottom: 4rem;
+}
+
+.timeline-year-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.timeline-year-label {
+    font-size: 1.4rem;
+    color: var(--gold-dim);
+    letter-spacing: 0.15em;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.timeline-year-divider {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--gold), transparent);
+    opacity: 0.3;
+}
+
+.timeline-cards {
+    column-count: 3;
+    column-gap: 20px;
+}
+
+@media (max-width: 1100px) {
+    .timeline-cards { column-count: 2; }
+}
+
+@media (max-width: 600px) {
+    .section-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+    .view-toggle { order: -1; }
+    .timeline-cards { column-count: 1; }
+}
+
+/* ==================== 라이트박스 관련 썸네일 ==================== */
+.lb-related {
+    display: flex;
+    gap: 8px;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(184,146,74,0.15);
+    flex-wrap: wrap;
+}
+
+.lb-related-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+    opacity: 0.7;
+}
+
+.lb-related-thumb:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+/* ==================== 슬라이드쇼 컨트롤 ==================== */
+.lb-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(184,146,74,0.15);
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.lb-speed-btns {
+    display: flex;
+    gap: 8px;
+    flex: 0 1 auto;
+}
+
+.lb-speed-btn {
+    background: none;
+    border: 1px solid rgba(184,146,74,0.3);
+    color: rgba(245,242,238,0.6);
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s var(--ease);
+    font-family: 'Pretendard', sans-serif;
+}
+
+.lb-speed-btn:hover {
+    border-color: var(--gold);
+    color: var(--white);
+}
+
+.lb-speed-btn.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #fff;
+}
+
+.lb-music-time {
+    font-size: 0.75rem;
+    color: rgba(245,242,238,0.5);
+    white-space: nowrap;
+}
+
+/* ==================== 바텀 네비게이션 (모바일) ==================== */
+.lb-bottom-nav {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .lb-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 9000;
+        background: rgba(8,7,6,0.97);
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding: 0;
+        gap: 0;
+    }
+
+    .lb-bottom-nav button {
+        flex: 1;
+        min-height: 56px;
+        background: none;
+        border: none;
+        color: rgba(245,242,238,0.7);
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.2s var(--ease);
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .lb-bottom-nav button:first-child { border-top: none; }
+
+    .lb-bottom-nav button:hover {
+        background: rgba(184,146,74,0.1);
+        color: var(--white);
+    }
+
+    .lb-content { max-height: calc(90vh - 56px); }
+}
+
+/* ==================== 페이지네이션 터치 타겟 ==================== */
+.page-btn {
+    min-height: 44px;
+    padding: 0 20px;
+}
+
+/* ==================== 스켈레톤 로더 ==================== */
+.card-skeleton .card-img-wrap {
+    background: linear-gradient(90deg, #ede8e0 25%, #f5f2ec 50%, #ede8e0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+    height: 280px;
+}
+
+.card-skeleton .card-body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.card-skeleton .card-meta,
+.card-skeleton .card-name,
+.card-skeleton .card-story {
+    background: linear-gradient(90deg, #ede8e0 25%, #f5f2ec 50%, #ede8e0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+    border-radius: 2px;
+}
+
+.card-skeleton .card-meta {
+    height: 0.72rem;
+    width: 60%;
+}
+
+.card-skeleton .card-name {
+    height: 0.8rem;
+    width: 80%;
+}
+
+.card-skeleton .card-story {
+    height: 1rem;
+    width: 100%;
+}
+
+@keyframes skeleton-shimmer {
+    0% { background-position: -200% 0 }
+    100% { background-position: 200% 0 }
 }
 
 /* ==================== FOOTER ==================== */

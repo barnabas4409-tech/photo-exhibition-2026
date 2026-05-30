@@ -26,6 +26,7 @@ let currentIndex = 0;
 const ITEMS_PER_PAGE = 50;
 let currentPage = 1;
 let activeQuery = '';
+let currentView = 'grid';
 
 // ============================================================
 //  구글 시트 데이터 가져오기
@@ -155,6 +156,27 @@ function formatDate(dateStr) {
 }
 
 // ============================================================
+//  스켈레톤 로더
+// ============================================================
+function renderSkeletons(n = 15) {
+    const gallery = document.getElementById('gallery');
+    gallery.innerHTML = '';
+    for (let i = 0; i < n; i++) {
+        const card = document.createElement('article');
+        card.className = 'card card-skeleton';
+        card.innerHTML = `
+            <div class="card-img-wrap"></div>
+            <div class="card-body">
+                <p class="card-meta"></p>
+                <p class="card-name"></p>
+                <p class="card-story"></p>
+            </div>
+        `;
+        gallery.appendChild(card);
+    }
+}
+
+// ============================================================
 //  갤러리 렌더링
 // ============================================================
 function getFilteredItems() {
@@ -165,6 +187,117 @@ function getFilteredItems() {
         (it.date  || '').toLowerCase().includes(q) ||
         (it.story || '').toLowerCase().includes(q)
     );
+}
+
+// ============================================================
+//  타임라인 뷰
+// ============================================================
+function extractYear(dateStr) {
+    if (!dateStr) return '연도 미상';
+    const match = dateStr.match(/(\d{4})/);
+    return match ? match[1] : '연도 미상';
+}
+
+function groupByYear(items) {
+    const groups = new Map();
+    items.forEach(item => {
+        const year = extractYear(item.date);
+        if (!groups.has(year)) groups.set(year, []);
+        groups.get(year).push(item);
+    });
+    const sorted = [...groups.entries()].sort((a, b) => {
+        if (a[0] === '연도 미상') return 1;
+        if (b[0] === '연도 미상') return -1;
+        return a[0].localeCompare(b[0]);
+    });
+    return new Map(sorted);
+}
+
+function createCard(item, globalIndex) {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.setAttribute('role', 'listitem');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `${item.name || '사진'} 크게 보기`);
+
+    const hasBody = item.name || item.date || item.story || item.place;
+    const meta = [item.date, item.place].filter(Boolean).map(escapeHtml).join(' · ');
+
+    card.innerHTML = `
+        ${item.imageUrl ? `
+        <div class="card-img-wrap">
+            <img
+                src="${escapeHtml(item.imageUrl)}"
+                alt="${escapeHtml(item.name || '')}의 사진"
+                loading="lazy"
+            >
+        </div>` : `<div class="card-no-img">사진 준비 중</div>`}
+        ${hasBody ? `
+        <div class="card-body">
+            <p class="card-meta">${meta}</p>
+            ${item.name  ? `<p class="card-name">${escapeHtml(item.name)}</p>` : ''}
+            ${item.story ? `<p class="card-story">${escapeHtml(item.story)}</p>` : ''}
+        </div>` : ''}
+    `;
+
+    const img = card.querySelector('img');
+    if (img) {
+        img.addEventListener('error', () => {
+            img.closest('.card-img-wrap').outerHTML =
+                '<div class="card-no-img">사진을 불러올 수 없습니다</div>';
+        });
+    }
+
+    card.addEventListener('click', () => openLightbox(globalIndex));
+    card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openLightbox(globalIndex);
+        }
+    });
+
+    return card;
+}
+
+function renderTimeline(filtered) {
+    const gallery = document.getElementById('gallery');
+    gallery.innerHTML = '';
+
+    if (filtered.length === 0) {
+        const msg = document.createElement('p');
+        msg.className = 'search-no-result';
+        msg.textContent = activeQuery
+            ? `"${activeQuery}"에 해당하는 사진이 없습니다.`
+            : '등록된 사진이 없습니다.';
+        gallery.appendChild(msg);
+        return;
+    }
+
+    const grouped = groupByYear(filtered);
+    grouped.forEach((yearItems, year) => {
+        const group = document.createElement('div');
+        group.className = 'timeline-group';
+
+        const yearHeader = document.createElement('div');
+        yearHeader.className = 'timeline-year-header';
+        yearHeader.innerHTML = `
+            <div class="timeline-year-line">
+                <span class="timeline-year-label">${escapeHtml(year)}</span>
+                <div class="timeline-year-divider"></div>
+            </div>
+        `;
+
+        const cardsDiv = document.createElement('div');
+        cardsDiv.className = 'timeline-cards';
+        yearItems.forEach(item => {
+            const globalIndex = items.indexOf(item);
+            cardsDiv.appendChild(createCard(item, globalIndex));
+        });
+
+        group.appendChild(yearHeader);
+        group.appendChild(cardsDiv);
+        gallery.appendChild(group);
+    });
 }
 
 function renderGallery(entries) {
@@ -182,48 +315,7 @@ function renderGallery(entries) {
     }
 
     entries.forEach(({ item, globalIndex }) => {
-        const card = document.createElement('article');
-        card.className = 'card';
-        card.setAttribute('role', 'listitem');
-        card.setAttribute('tabindex', '0');
-        card.setAttribute('aria-label', `${item.name || '사진'} 크게 보기`);
-
-        const hasBody = item.name || item.date || item.story || item.place;
-
-        card.innerHTML = `
-            ${item.imageUrl ? `
-            <div class="card-img-wrap">
-                <img
-                    src="${escapeHtml(item.imageUrl)}"
-                    alt="${escapeHtml(item.name || '')}의 사진"
-                    loading="lazy"
-                >
-            </div>` : `<div class="card-no-img">사진 준비 중</div>`}
-            ${hasBody ? `
-            <div class="card-body">
-                <p class="card-meta">${[item.date, item.place].filter(Boolean).map(escapeHtml).join(' · ')}</p>
-                ${item.name  ? `<p class="card-name">${escapeHtml(item.name)}</p>` : ''}
-                ${item.story ? `<p class="card-story">${escapeHtml(item.story)}</p>` : ''}
-            </div>` : ''}
-        `;
-
-        const img = card.querySelector('img');
-        if (img) {
-            img.addEventListener('error', () => {
-                img.closest('.card-img-wrap').outerHTML =
-                    '<div class="card-no-img">사진을 불러올 수 없습니다</div>';
-            });
-        }
-
-        card.addEventListener('click', () => openLightbox(globalIndex));
-        card.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                openLightbox(globalIndex);
-            }
-        });
-
-        gallery.appendChild(card);
+        gallery.appendChild(createCard(item, globalIndex));
     });
 }
 
@@ -232,20 +324,31 @@ function renderView() {
     const isSearching = activeQuery.length > 0;
     const countEl = document.getElementById('search-count');
 
-    let entries;
     if (isSearching) {
-        entries = filtered.map(item => ({ item, globalIndex: items.indexOf(item) }));
         countEl.textContent = `${filtered.length}개의 사진`;
         countEl.classList.add('visible');
+        currentView = 'grid';
+        document.getElementById('btn-view-grid')?.classList.add('active');
+        document.getElementById('btn-view-timeline')?.classList.remove('active');
     } else {
-        const start = (currentPage - 1) * ITEMS_PER_PAGE;
-        entries = filtered.slice(start, start + ITEMS_PER_PAGE)
-                         .map((item, i) => ({ item, globalIndex: start + i }));
         countEl.classList.remove('visible');
     }
 
-    renderGallery(entries);
-    updatePagination(filtered.length, isSearching);
+    if (currentView === 'timeline' && !isSearching) {
+        renderTimeline(filtered);
+        document.getElementById('pagination').classList.add('hidden');
+    } else {
+        let entries;
+        if (isSearching) {
+            entries = filtered.map(item => ({ item, globalIndex: items.indexOf(item) }));
+        } else {
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            entries = filtered.slice(start, start + ITEMS_PER_PAGE)
+                             .map((item, i) => ({ item, globalIndex: start + i }));
+        }
+        renderGallery(entries);
+        updatePagination(filtered.length, isSearching);
+    }
 }
 
 function updatePagination(total, isSearching) {
@@ -287,6 +390,9 @@ function openLightbox(index) {
 function closeLightbox() {
     document.getElementById('lightbox').classList.add('hidden');
     document.body.style.overflow = '';
+    if (slideshowActive) {
+        stopSlideshow();
+    }
 }
 
 function showPrev() {
@@ -320,6 +426,33 @@ function updateLightbox() {
 
     document.getElementById('lb-counter').textContent =
         `${currentIndex + 1} / ${items.length}`;
+
+    // 같은 연도 사진 썸네일 표시
+    const currentYear = extractYear(item.date);
+    const relatedItems = items.filter(it => extractYear(it.date) === currentYear && it.imageUrl);
+    const relatedEl = document.getElementById('lb-related');
+    if (relatedEl && relatedItems.length > 1) {
+        relatedEl.innerHTML = relatedItems.slice(0, 6).map((relItem, i) => {
+            const relIdx = items.indexOf(relItem);
+            const isCurrent = relIdx === currentIndex ? 'border: 2px solid var(--gold)' : '';
+            return `
+                <img
+                    src="${escapeHtml(relItem.imageUrl)}"
+                    alt="${escapeHtml(relItem.name || '')}의 사진"
+                    class="lb-related-thumb"
+                    style="${isCurrent}"
+                    tabindex="0"
+                    role="button"
+                    aria-label="이 사진 보기"
+                    onclick="openLightbox(${relIdx})"
+                    onkeydown="if(event.key==='Enter'||event.key===' ') { event.preventDefault(); openLightbox(${relIdx}); }"
+                >
+            `;
+        }).join('');
+        relatedEl.style.display = 'block';
+    } else if (relatedEl) {
+        relatedEl.style.display = 'none';
+    }
 }
 
 // ============================================================
@@ -367,14 +500,38 @@ function toggleMusic() {
 // ============================================================
 //  슬라이드쇼
 // ============================================================
-const SLIDE_DURATION = 5000; // 5초
+let SLIDE_DURATION = 5000; // 5초
 let slideshowTimer   = null;
 let slideshowActive  = false;
+let musicTimeInterval = null;
+
+function setSlideSpeed(ms) {
+    SLIDE_DURATION = ms;
+    if (slideshowActive) {
+        clearTimeout(slideshowTimer);
+        scheduleNext();
+    }
+}
+
+function formatTime(sec) {
+    const min = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${min}:${String(s).padStart(2, '0')}`;
+}
+
+function updateMusicTime() {
+    if (!ytPlayer) return;
+    const current = ytPlayer.getCurrentTime?.() || 0;
+    const musicTimeEl = document.getElementById('lb-music-time');
+    if (musicTimeEl) {
+        musicTimeEl.textContent = `♪ ${formatTime(current)}`;
+    }
+}
 
 function startSlideshow() {
     if (items.length === 0) return;
-    // 기존 타이머 완전히 정리 후 시작
     clearTimeout(slideshowTimer);
+    clearInterval(musicTimeInterval);
     slideshowActive = true;
 
     if (document.getElementById('lightbox').classList.contains('hidden')) {
@@ -383,14 +540,28 @@ function startSlideshow() {
     }
 
     document.getElementById('lb-progress-wrap').classList.add('visible');
+
+    // 음악 시간 업데이트 시작
+    updateMusicTime();
+    musicTimeInterval = setInterval(updateMusicTime, 1000);
+
+    // 슬라이드쇼 버튼 상태 업데이트
+    const btn = document.getElementById('lb-slideshow-toggle');
+    if (btn) btn.textContent = '⏸';
+
     scheduleNext();
 }
 
 function stopSlideshow() {
     slideshowActive = false;
     clearTimeout(slideshowTimer);
+    clearInterval(musicTimeInterval);
     document.getElementById('lb-progress-wrap').classList.remove('visible');
     resetProgress();
+
+    // 슬라이드쇼 버튼 상태 업데이트
+    const btn = document.getElementById('lb-slideshow-toggle');
+    if (btn) btn.textContent = '▶';
 }
 
 function scheduleNext() {
@@ -457,6 +628,27 @@ document.getElementById('lb-next').addEventListener('click', () => {
     showNext();
 });
 
+// 바텀 네비게이션 (모바일)
+document.getElementById('lbn-close')?.addEventListener('click', () => {
+    stopSlideshow();
+    closeLightbox();
+});
+document.getElementById('lbn-prev')?.addEventListener('click', () => {
+    if (slideshowActive) { clearTimeout(slideshowTimer); scheduleNext(); }
+    showPrev();
+});
+document.getElementById('lbn-next')?.addEventListener('click', () => {
+    if (slideshowActive) { clearTimeout(slideshowTimer); scheduleNext(); }
+    showNext();
+});
+document.getElementById('lbn-slideshow')?.addEventListener('click', () => {
+    if (slideshowActive) {
+        stopSlideshow();
+    } else {
+        startSlideshow();
+    }
+});
+
 document.getElementById('lightbox').addEventListener('click', (e) => {
     if (e.target === e.currentTarget) { stopSlideshow(); closeLightbox(); }
 });
@@ -482,6 +674,55 @@ document.getElementById('page-next').addEventListener('click', () => {
     document.getElementById('gallery-section').scrollIntoView({ behavior: 'smooth' });
 });
 
+// 뷰 전환 버튼 & 슬라이드쇼 속도 버튼
+document.addEventListener('DOMContentLoaded', () => {
+    const btnGrid = document.getElementById('btn-view-grid');
+    const btnTimeline = document.getElementById('btn-view-timeline');
+    if (btnGrid) {
+        btnGrid.addEventListener('click', () => {
+            currentView = 'grid';
+            currentPage = 1;
+            btnGrid.classList.add('active');
+            btnTimeline?.classList.remove('active');
+            renderView();
+        });
+    }
+    if (btnTimeline) {
+        btnTimeline.addEventListener('click', () => {
+            currentView = 'timeline';
+            btnTimeline.classList.add('active');
+            btnGrid?.classList.remove('active');
+            renderView();
+        });
+    }
+
+    // 슬라이드쇼 속도 버튼
+    document.getElementById('lb-speed-3')?.addEventListener('click', () => {
+        document.querySelectorAll('.lb-speed-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('lb-speed-3').classList.add('active');
+        setSlideSpeed(3000);
+    });
+    document.getElementById('lb-speed-5')?.addEventListener('click', () => {
+        document.querySelectorAll('.lb-speed-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('lb-speed-5').classList.add('active');
+        setSlideSpeed(5000);
+    });
+    document.getElementById('lb-speed-10')?.addEventListener('click', () => {
+        document.querySelectorAll('.lb-speed-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('lb-speed-10').classList.add('active');
+        setSlideSpeed(10000);
+    });
+
+    // 슬라이드쇼 일시정지 버튼
+    document.getElementById('lb-slideshow-toggle')?.addEventListener('click', () => {
+        if (slideshowActive) {
+            stopSlideshow();
+        } else {
+            startSlideshow();
+        }
+    });
+});
+
 document.getElementById('btn-music').addEventListener('click', toggleMusic);
 document.getElementById('btn-enjoy').addEventListener('click', () => {
     toggleMusic();
@@ -490,13 +731,19 @@ document.getElementById('btn-enjoy').addEventListener('click', () => {
 
 // 모바일 스와이프
 let touchStartX = 0;
+let touchStartY = 0;
 document.getElementById('lightbox').addEventListener('touchstart', (e) => {
     touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
 }, { passive: true });
 
 document.getElementById('lightbox').addEventListener('touchend', (e) => {
     const dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) < 50) return;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    // 수직 스와이프면 무시
+    if (Math.abs(dy) > Math.abs(dx) * 0.7) return;
+    // 수평 스와이프 임계값 30px
+    if (Math.abs(dx) < 30) return;
     dx < 0 ? showNext() : showPrev();
 }, { passive: true });
 
@@ -532,11 +779,15 @@ async function init() {
         return;
     }
 
+    // 스켈레톤 로더 표시
+    loadingEl.classList.add('hidden');
+    renderSkeletons();
+
     try {
         items = (await fetchData()).sort((a, b) => (parseInt(a.num) || 0) - (parseInt(b.num) || 0));
-        loadingEl.classList.add('hidden');
 
         if (items.length === 0) {
+            document.getElementById('gallery').innerHTML = '';
             errorText.textContent = '아직 등록된 사진이 없습니다.';
             errorEl.classList.remove('hidden');
             return;
@@ -547,7 +798,7 @@ async function init() {
 
     } catch (err) {
         console.error('[사진전] 데이터 로드 실패:', err);
-        loadingEl.classList.add('hidden');
+        document.getElementById('gallery').innerHTML = '';
         errorText.textContent =
             '사진을 불러오는 데 문제가 발생했습니다. ' +
             '구글 시트가 "웹에 게시"되었는지 확인해주세요.';
